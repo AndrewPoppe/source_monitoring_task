@@ -44,35 +44,13 @@
         <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
       </TextComponent>
       <CodeComponent name="code_2">
-        <Param name="Begin Experiment" val="from pyo import *&#10;serv = Server().boot()&#10;&#10;&#10;# define function to slow audio data&#10;def slow(playback_speed):&#10;    dur = 1&#10;&#10;    #playback_speed = .925&#10;    i = Input()&#10;&#10;    def start():&#10;        print &quot;start!&quot;&#10;        rec.play()&#10;        a.play().out()&#10;        tf.stop()&#10;&#10;    def stop():&#10;        print &quot;stop!&quot;&#10;        a.stop()&#10;        a.reset()&#10;        tf.play()&#10;&#10;    tab = NewTable(dur)&#10;    transpo_to_normal = (-24.0 * playback_speed) + 24&#10;    j = Harmonizer(i, transpo=transpo_to_normal).mix(2)&#10;    k = Gate(j, thresh=-70, falltime=0.02, lookahead=20.0)&#10;    rec = TableRec(k, tab)&#10;    a = TableRead(table=tab, freq=playback_speed/dur).stop()&#10;&#10;    env = Follower(i)&#10;    th = Thresh(env, .2)&#10;    tf = TrigFunc(th, start)&#10;&#10;    tr = TrigFunc(rec['trig'], stop)" valType="extendedCode" updates="constant"/>
+        <Param name="Begin Experiment" val="from pyo import *&#10;serv = Server().boot()&#10;&#10;&#10;# define function to slow audio data&#10;def slow(playback_speed):&#10;    dur = 2&#10;    if playback_speed == 0:&#10;        playback_speed = pow(10,-100)&#10;    i = Input()&#10;&#10;    def start():&#10;        print &quot;start!&quot;&#10;        rec.play()&#10;        a.play().out()&#10;        tf.stop()&#10;&#10;    def stop():&#10;        print &quot;stop!&quot;&#10;        a.stop()&#10;        a.reset()&#10;        tf.play()&#10;&#10;    tab = NewTable(dur, chnls=2)&#10;    transpo_to_normal = math.log(1.0 / playback_speed, 2) * 12&#10;    j = Harmonizer(i, transpo=transpo_to_normal)&#10;    k = Gate(j, thresh=-70, falltime=0.02, lookahead=20.0).mix(2)&#10;    rec = TableRec(k, tab)&#10;    a = TableRead(table=tab, freq=playback_speed/dur).stop()&#10;    env = Follower(i)&#10;    th = Thresh(env, .2)&#10;    tf = TrigFunc(th, start)&#10;    tr = TrigFunc(rec['trig'], stop)" valType="extendedCode" updates="constant"/>
         <Param name="name" val="code_2" valType="code" updates="None"/>
         <Param name="Each Frame" val="" valType="extendedCode" updates="constant"/>
         <Param name="Begin Routine" val="" valType="extendedCode" updates="constant"/>
         <Param name="End Routine" val="serv.start()" valType="extendedCode" updates="constant"/>
         <Param name="End Experiment" val="" valType="extendedCode" updates="constant"/>
       </CodeComponent>
-    </Routine>
-    <Routine name="slowed">
-      <TextComponent name="text_3">
-        <Param name="opacity" val="1" valType="code" updates="constant"/>
-        <Param name="colorSpace" val="rgb" valType="str" updates="constant"/>
-        <Param name="name" val="text_3" valType="code" updates="None"/>
-        <Param name="color" val="white" valType="str" updates="constant"/>
-        <Param name="wrapWidth" val="" valType="code" updates="constant"/>
-        <Param name="stopVal" val="10" valType="code" updates="constant"/>
-        <Param name="durationEstim" val="" valType="code" updates="None"/>
-        <Param name="pos" val="[0, 0]" valType="code" updates="constant"/>
-        <Param name="flip" val="" valType="str" updates="constant"/>
-        <Param name="startEstim" val="" valType="code" updates="None"/>
-        <Param name="units" val="from exp settings" valType="str" updates="None"/>
-        <Param name="text" val="should be good to go" valType="str" updates="constant"/>
-        <Param name="startType" val="time (s)" valType="str" updates="None"/>
-        <Param name="ori" val="0" valType="code" updates="constant"/>
-        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
-        <Param name="startVal" val="0.0" valType="code" updates="None"/>
-        <Param name="font" val="Arial" valType="str" updates="constant"/>
-        <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
-      </TextComponent>
     </Routine>
     <Routine name="ok">
       <CodeComponent name="code">
@@ -106,7 +84,6 @@
     </Routine>
   </Routines>
   <Flow>
-    <Routine name="slowed"/>
     <LoopInitiator loopType="TrialHandler" name="trials">
       <Param name="conditionsFile" val="wordlist.csv" valType="str" updates="None"/>
       <Param name="name" val="trials" valType="code" updates="None"/>
