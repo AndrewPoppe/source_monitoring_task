@@ -1,0 +1,125 @@
+<PsychoPy2experiment version="1.81.03" encoding="utf-8">
+  <Settings>
+    <Param name="Show mouse" val="False" valType="bool" updates="None"/>
+    <Param name="Data filename" val="'data/%s_%s_%s' %(expInfo['participant'], expName, expInfo['date'])" valType="code" updates="None"/>
+    <Param name="Monitor" val="testMonitor" valType="str" updates="None"/>
+    <Param name="Enable Escape" val="True" valType="bool" updates="None"/>
+    <Param name="color" val="$[0,0,0]" valType="str" updates="None"/>
+    <Param name="Window size (pixels)" val="[1024, 768]" valType="code" updates="None"/>
+    <Param name="Full-screen window" val="True" valType="bool" updates="None"/>
+    <Param name="colorSpace" val="rgb" valType="str" updates="None"/>
+    <Param name="Experiment info" val="{'participant':'', 'session':'001'}" valType="code" updates="None"/>
+    <Param name="Save csv file" val="False" valType="bool" updates="None"/>
+    <Param name="Show info dlg" val="True" valType="bool" updates="None"/>
+    <Param name="Save wide csv file" val="True" valType="bool" updates="None"/>
+    <Param name="Save psydat file" val="True" valType="bool" updates="None"/>
+    <Param name="expName" val="source_monitoring" valType="str" updates="None"/>
+    <Param name="logging level" val="exp" valType="code" updates="None"/>
+    <Param name="blendMode" val="avg" valType="str" updates="None"/>
+    <Param name="Save excel file" val="False" valType="bool" updates="None"/>
+    <Param name="Units" val="use prefs" valType="str" updates="None"/>
+    <Param name="Save log file" val="True" valType="bool" updates="None"/>
+    <Param name="Screen" val="1" valType="num" updates="None"/>
+  </Settings>
+  <Routines>
+    <Routine name="trial">
+      <TextComponent name="text">
+        <Param name="opacity" val="1" valType="code" updates="constant"/>
+        <Param name="colorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="name" val="text" valType="code" updates="None"/>
+        <Param name="color" val="white" valType="str" updates="constant"/>
+        <Param name="wrapWidth" val="2" valType="code" updates="constant"/>
+        <Param name="stopVal" val="2" valType="code" updates="constant"/>
+        <Param name="durationEstim" val="" valType="code" updates="None"/>
+        <Param name="pos" val="[0, 0]" valType="code" updates="constant"/>
+        <Param name="flip" val="" valType="str" updates="constant"/>
+        <Param name="startEstim" val="" valType="code" updates="None"/>
+        <Param name="units" val="from exp settings" valType="str" updates="None"/>
+        <Param name="text" val="get ready to say the word that appears on the screen..." valType="str" updates="constant"/>
+        <Param name="startType" val="time (s)" valType="str" updates="None"/>
+        <Param name="ori" val="0" valType="code" updates="constant"/>
+        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
+        <Param name="startVal" val="0.0" valType="code" updates="None"/>
+        <Param name="font" val="Arial" valType="str" updates="constant"/>
+        <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
+      </TextComponent>
+      <CodeComponent name="code_2">
+        <Param name="Begin Experiment" val="from pyo import *&#10;serv = Server().boot()&#10;&#10;&#10;# define function to slow audio data&#10;def slow(playback_speed):&#10;    dur = 1&#10;&#10;    #playback_speed = .925&#10;    i = Input()&#10;&#10;    def start():&#10;        print &quot;start!&quot;&#10;        rec.play()&#10;        a.play().out()&#10;        tf.stop()&#10;&#10;    def stop():&#10;        print &quot;stop!&quot;&#10;        a.stop()&#10;        a.reset()&#10;        tf.play()&#10;&#10;    tab = NewTable(dur)&#10;    transpo_to_normal = (-24.0 * playback_speed) + 24&#10;    j = Harmonizer(i, transpo=transpo_to_normal).mix(2)&#10;    k = Gate(j, thresh=-70, falltime=0.02, lookahead=20.0)&#10;    rec = TableRec(k, tab)&#10;    a = TableRead(table=tab, freq=playback_speed/dur).stop()&#10;&#10;    env = Follower(i)&#10;    th = Thresh(env, .2)&#10;    tf = TrigFunc(th, start)&#10;&#10;    tr = TrigFunc(rec['trig'], stop)" valType="extendedCode" updates="constant"/>
+        <Param name="name" val="code_2" valType="code" updates="None"/>
+        <Param name="Each Frame" val="" valType="extendedCode" updates="constant"/>
+        <Param name="Begin Routine" val="" valType="extendedCode" updates="constant"/>
+        <Param name="End Routine" val="serv.start()" valType="extendedCode" updates="constant"/>
+        <Param name="End Experiment" val="" valType="extendedCode" updates="constant"/>
+      </CodeComponent>
+    </Routine>
+    <Routine name="slowed">
+      <TextComponent name="text_3">
+        <Param name="opacity" val="1" valType="code" updates="constant"/>
+        <Param name="colorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="name" val="text_3" valType="code" updates="None"/>
+        <Param name="color" val="white" valType="str" updates="constant"/>
+        <Param name="wrapWidth" val="" valType="code" updates="constant"/>
+        <Param name="stopVal" val="10" valType="code" updates="constant"/>
+        <Param name="durationEstim" val="" valType="code" updates="None"/>
+        <Param name="pos" val="[0, 0]" valType="code" updates="constant"/>
+        <Param name="flip" val="" valType="str" updates="constant"/>
+        <Param name="startEstim" val="" valType="code" updates="None"/>
+        <Param name="units" val="from exp settings" valType="str" updates="None"/>
+        <Param name="text" val="should be good to go" valType="str" updates="constant"/>
+        <Param name="startType" val="time (s)" valType="str" updates="None"/>
+        <Param name="ori" val="0" valType="code" updates="constant"/>
+        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
+        <Param name="startVal" val="0.0" valType="code" updates="None"/>
+        <Param name="font" val="Arial" valType="str" updates="constant"/>
+        <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
+      </TextComponent>
+    </Routine>
+    <Routine name="ok">
+      <CodeComponent name="code">
+        <Param name="Begin Experiment" val="&#10;" valType="extendedCode" updates="constant"/>
+        <Param name="name" val="code" valType="code" updates="None"/>
+        <Param name="Each Frame" val="if d.get() &gt; talkThresh:&#10;        talkStarted = True&#10;&#10;if talkStarted and not stoppedTalking:&#10;    if d.get() &lt; talkThresh:&#10;        stoppedTalking = True&#10;        stopTime = globalClock.getTime() + 1&#10;&#10;if stoppedTalking and globalClock.getTime() &gt;= stopTime:&#10;        for thisComponent in trialComponents:&#10;            if hasattr(thisComponent, &quot;status&quot;):&#10;                thisComponent.status = FINISHED&#10;        continueRoutine = False&#10;" valType="extendedCode" updates="constant"/>
+        <Param name="Begin Routine" val="&#10;mic = Input(chnl=0)&#10;&#10;## This uses harmonizer&#10;b = Harmonizer(mic, transpo=harmPitch)&#10;c = Gate(b, thresh=-90, falltime=0.02, lookahead=20.0).mix(2).out()&#10;d = Follower2(b)&#10;&#10;talkThresh = .08&#10;talkStarted = False&#10;stoppedTalking = False&#10;stopTime = 100&#10;&#10;&#10;## This uses phase vocoder&#10;#pva = PVAnal(mic, size=1024, overlaps=4, wintype=2)&#10;#pvs = PVAddSynth(pva, pitch=pvPitch, num=100, first=0, inc=2).mix(2).out()" valType="extendedCode" updates="constant"/>
+        <Param name="End Routine" val="serv.stop()" valType="extendedCode" updates="constant"/>
+        <Param name="End Experiment" val="" valType="extendedCode" updates="constant"/>
+      </CodeComponent>
+      <TextComponent name="text_2">
+        <Param name="opacity" val="1" valType="code" updates="constant"/>
+        <Param name="colorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="name" val="text_2" valType="code" updates="None"/>
+        <Param name="color" val="white" valType="str" updates="constant"/>
+        <Param name="wrapWidth" val="" valType="code" updates="constant"/>
+        <Param name="stopVal" val="10" valType="code" updates="constant"/>
+        <Param name="durationEstim" val="" valType="code" updates="None"/>
+        <Param name="pos" val="[0, 0]" valType="code" updates="constant"/>
+        <Param name="flip" val="" valType="str" updates="constant"/>
+        <Param name="startEstim" val="" valType="code" updates="None"/>
+        <Param name="units" val="from exp settings" valType="str" updates="None"/>
+        <Param name="text" val="$word" valType="str" updates="set every repeat"/>
+        <Param name="startType" val="time (s)" valType="str" updates="None"/>
+        <Param name="ori" val="0" valType="code" updates="constant"/>
+        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
+        <Param name="startVal" val="1" valType="code" updates="None"/>
+        <Param name="font" val="Arial" valType="str" updates="constant"/>
+        <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
+      </TextComponent>
+    </Routine>
+  </Routines>
+  <Flow>
+    <Routine name="slowed"/>
+    <LoopInitiator loopType="TrialHandler" name="trials">
+      <Param name="conditionsFile" val="wordlist.csv" valType="str" updates="None"/>
+      <Param name="name" val="trials" valType="code" updates="None"/>
+      <Param name="isTrials" val="True" valType="bool" updates="None"/>
+      <Param name="random seed" val="" valType="code" updates="None"/>
+      <Param name="loopType" val="random" valType="str" updates="None"/>
+      <Param name="nReps" val="1" valType="code" updates="None"/>
+      <Param name="endPoints" val="[0, 1]" valType="num" updates="None"/>
+      <Param name="conditions" val="[{'word': u'cat', 'pitch': 0.85}, {'word': u'dog', 'pitch': 0.9}, {'word': u'truck', 'pitch': 1.1}, {'word': u'car', 'pitch': 1.15}, {'word': u'elephant', 'pitch': 1.2}]" valType="str" updates="None"/>
+      <Param name="Selected rows" val="" valType="str" updates="None"/>
+    </LoopInitiator>
+    <Routine name="trial"/>
+    <Routine name="ok"/>
+    <LoopTerminator name="trials"/>
+  </Flow>
+</PsychoPy2experiment>
