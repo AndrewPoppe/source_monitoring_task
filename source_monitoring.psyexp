@@ -4,7 +4,7 @@
     <Param name="Data filename" val="'data/%s_%s_%s' %(expInfo['participant'], expName, expInfo['date'])" valType="code" updates="None"/>
     <Param name="Monitor" val="testMonitor" valType="str" updates="None"/>
     <Param name="Enable Escape" val="True" valType="bool" updates="None"/>
-    <Param name="color" val="$[0,0,0]" valType="str" updates="None"/>
+    <Param name="color" val="$[-1,-1,-1]" valType="str" updates="None"/>
     <Param name="Window size (pixels)" val="[1440, 900]" valType="code" updates="None"/>
     <Param name="Full-screen window" val="True" valType="bool" updates="None"/>
     <Param name="colorSpace" val="rgb" valType="str" updates="None"/>
@@ -22,44 +22,14 @@
     <Param name="Screen" val="1" valType="num" updates="None"/>
   </Settings>
   <Routines>
-    <Routine name="trial">
-      <TextComponent name="text">
-        <Param name="opacity" val="1" valType="code" updates="constant"/>
-        <Param name="colorSpace" val="rgb" valType="str" updates="constant"/>
-        <Param name="name" val="text" valType="code" updates="None"/>
-        <Param name="wrapWidth" val="2" valType="code" updates="constant"/>
-        <Param name="color" val="white" valType="str" updates="constant"/>
-        <Param name="text" val="get ready to say the word that appears on the screen..." valType="str" updates="constant"/>
-        <Param name="stopVal" val="2" valType="code" updates="constant"/>
-        <Param name="durationEstim" val="" valType="code" updates="None"/>
-        <Param name="pos" val="[0, 0]" valType="code" updates="constant"/>
-        <Param name="flip" val="" valType="str" updates="constant"/>
-        <Param name="startEstim" val="" valType="code" updates="None"/>
-        <Param name="units" val="from exp settings" valType="str" updates="None"/>
-        <Param name="startType" val="time (s)" valType="str" updates="None"/>
-        <Param name="ori" val="0" valType="code" updates="constant"/>
-        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
-        <Param name="startVal" val="0.0" valType="code" updates="None"/>
-        <Param name="font" val="Arial" valType="str" updates="constant"/>
-        <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
-      </TextComponent>
-      <CodeComponent name="code_2">
-        <Param name="Begin Experiment" val="&#10;" valType="extendedCode" updates="constant"/>
-        <Param name="name" val="code_2" valType="code" updates="None"/>
-        <Param name="Begin Routine" val="" valType="extendedCode" updates="constant"/>
-        <Param name="End Routine" val="serv.start()" valType="extendedCode" updates="constant"/>
-        <Param name="End Experiment" val="" valType="extendedCode" updates="constant"/>
-        <Param name="Each Frame" val="" valType="extendedCode" updates="constant"/>
-      </CodeComponent>
-    </Routine>
     <Routine name="ok">
       <CodeComponent name="code">
         <Param name="Begin Experiment" val="" valType="extendedCode" updates="constant"/>
         <Param name="name" val="code" valType="code" updates="None"/>
-        <Param name="Begin Routine" val="if(changeType == &quot;pitch&quot;):&#10;    print 'this is a pitch trial'&#10;    mic = Input(chnl=0)&#10;&#10;    ## This uses harmonizer&#10;    b = Harmonizer(mic, transpo=harmPitch)&#10;    c = Gate(b, thresh=-90, falltime=0.02, lookahead=20.0).mix(2).out()&#10;    d = Follower2(b)&#10;&#10;    talkThresh = .08&#10;    talkStarted = False&#10;    stoppedTalking = False&#10;    stopTime = 100&#10;else:&#10;    print 'this is a speed trial'&#10;    finished = 'not finished'&#10;    playback_speed = speed&#10;    dur = 2&#10;    if playback_speed == 0:&#10;        playback_speed = pow(10,-100)&#10;    i = Input()&#10;&#10;    def start():&#10;        print &quot;start!&quot;&#10;        rec.play()&#10;        a.play().out()&#10;        tf.stop()&#10;&#10;    def stop():&#10;        print &quot;stop!&quot;&#10;        i.stop()&#10;        global finished&#10;        finished = 'finished'&#10;        a.stop()&#10;        a.reset()&#10;        tf.play()&#10;&#10;    tab = NewTable(dur, chnls=2)&#10;    transpo_to_normal = math.log(1.0 / playback_speed, 2) * 12&#10;    j = Harmonizer(i, transpo=transpo_to_normal).mix(2)&#10;    k = Gate(j, thresh=-70, falltime=0.02, lookahead=20.0)&#10;    rec = TableRec(k, tab)&#10;    a = TableRead(table=tab, freq=playback_speed/dur).stop()&#10;    env = Follower(i)&#10;    th = Thresh(env, .2)&#10;    tf = TrigFunc(th, start)&#10;    tr = TrigFunc(rec['trig'], stop)" valType="extendedCode" updates="constant"/>
-        <Param name="End Routine" val="#serv.stop()&#10;print finished" valType="extendedCode" updates="constant"/>
+        <Param name="Begin Routine" val="if(trialtype == &quot;pitch&quot;): # pitch trial&#10;    mic = Input(chnl=0)&#10;    b = Harmonizer(mic, transpo=float(amount))&#10;    c = Gate(b, thresh=-90, falltime=0.02, lookahead=20.0).mix(2).out()&#10;    d = Follower2(b)&#10;    talkThresh = .08&#10;    talkStarted = False&#10;    stoppedTalking = False&#10;    stopTime = 100&#10;elif(trialtype == 'speed'): # speed trial&#10;    finished = 'not finished'&#10;    playback_speed = float(amount)&#10;    dur = 2&#10;    if playback_speed == 0:&#10;        playback_speed = pow(10,-100)&#10;    i = Input()&#10;&#10;    def start():&#10;        rec.play()&#10;        a.play().out()&#10;        tf.stop()&#10;&#10;    def stop():&#10;        i.stop()&#10;        global finished&#10;        finished = 'finished'&#10;        a.stop()&#10;        a.reset()&#10;        tf.play()&#10;&#10;    tab = NewTable(dur, chnls=2)&#10;    transpo_to_normal = math.log(1.0 / playback_speed, 2) * 12&#10;    j = Harmonizer(i, transpo=transpo_to_normal).mix(2)&#10;    k = Gate(j, thresh=-70, falltime=0.02, lookahead=20.0)&#10;    rec = TableRec(k, tab)&#10;    a = TableRead(table=tab, freq=playback_speed/dur).stop()&#10;    env = Follower(i)&#10;    th = Thresh(env, .2)&#10;    tf = TrigFunc(th, start)&#10;    tr = TrigFunc(rec['trig'], stop)&#10;else: # unmodified trial&#10;    mic = Input(chnl=0)&#10;    b = Gate(mic, thresh=-90, falltime=0.02, lookahead=20.0).mix(2).out()&#10;    d = Follower2(mic)&#10;    talkThresh = .08&#10;    talkStarted = False&#10;    stoppedTalking = False&#10;    stopTime = 100" valType="extendedCode" updates="constant"/>
+        <Param name="End Routine" val="" valType="extendedCode" updates="constant"/>
         <Param name="End Experiment" val="" valType="extendedCode" updates="constant"/>
-        <Param name="Each Frame" val="if(changeType == &quot;pitch&quot;):&#10;    if d.get() &gt; talkThresh:&#10;            talkStarted = True&#10;&#10;    if talkStarted and not stoppedTalking:&#10;        if d.get() &lt; talkThresh:&#10;            stoppedTalking = True&#10;            stopTime = globalClock.getTime() + 1&#10;&#10;    if stoppedTalking and globalClock.getTime() &gt;= stopTime:&#10;        mic.stop()&#10;        for thisComponent in trialComponents:&#10;            if hasattr(thisComponent, &quot;status&quot;):&#10;                thisComponent.status = FINISHED&#10;            continueRoutine = False&#10;else:&#10;    if(finished == 'finished'):&#10;        print 'it worked'&#10;        for thisComponent in trialComponents:&#10;            if hasattr(thisComponent, &quot;status&quot;):&#10;                thisComponent.status = FINISHED&#10;            continueRoutine = False" valType="extendedCode" updates="constant"/>
+        <Param name="Each Frame" val="if(trialtype == &quot;pitch&quot; or trialtype == &quot;unmodified&quot;):&#10;    if d.get() &gt; talkThresh:&#10;            talkStarted = True&#10;&#10;    if talkStarted and not stoppedTalking:&#10;        if d.get() &lt; talkThresh:&#10;            stoppedTalking = True&#10;            stopTime = globalClock.getTime() + 1&#10;&#10;    if stoppedTalking and globalClock.getTime() &gt;= stopTime:&#10;        mic.stop()&#10;        for thisComponent in trialComponents:&#10;            if hasattr(thisComponent, &quot;status&quot;):&#10;                thisComponent.status = FINISHED&#10;            continueRoutine = False&#10;else:&#10;    if(finished == 'finished'):&#10;        for thisComponent in trialComponents:&#10;            if hasattr(thisComponent, &quot;status&quot;):&#10;                thisComponent.status = FINISHED&#10;            continueRoutine = False" valType="extendedCode" updates="constant"/>
       </CodeComponent>
       <TextComponent name="text_2">
         <Param name="opacity" val="1" valType="code" updates="constant"/>
@@ -82,9 +52,203 @@
         <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
       </TextComponent>
     </Routine>
+    <Routine name="trial_setup">
+      <CodeComponent name="code_4">
+        <Param name="Begin Experiment" val="" valType="extendedCode" updates="constant"/>
+        <Param name="name" val="code_4" valType="code" updates="None"/>
+        <Param name="Begin Routine" val="" valType="extendedCode" updates="constant"/>
+        <Param name="End Routine" val="" valType="extendedCode" updates="constant"/>
+        <Param name="End Experiment" val="" valType="extendedCode" updates="constant"/>
+        <Param name="Each Frame" val="" valType="extendedCode" updates="constant"/>
+      </CodeComponent>
+    </Routine>
+    <Routine name="thankyou">
+      <TextComponent name="text_3">
+        <Param name="opacity" val="1" valType="code" updates="constant"/>
+        <Param name="colorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="name" val="text_3" valType="code" updates="None"/>
+        <Param name="wrapWidth" val="" valType="code" updates="constant"/>
+        <Param name="color" val="white" valType="str" updates="constant"/>
+        <Param name="text" val="Thank you for participating!" valType="str" updates="constant"/>
+        <Param name="stopVal" val="5" valType="code" updates="constant"/>
+        <Param name="durationEstim" val="" valType="code" updates="None"/>
+        <Param name="pos" val="[0, 0]" valType="code" updates="constant"/>
+        <Param name="flip" val="" valType="str" updates="constant"/>
+        <Param name="startEstim" val="" valType="code" updates="None"/>
+        <Param name="units" val="from exp settings" valType="str" updates="None"/>
+        <Param name="startType" val="time (s)" valType="str" updates="None"/>
+        <Param name="ori" val="0" valType="code" updates="constant"/>
+        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
+        <Param name="startVal" val="0.0" valType="code" updates="None"/>
+        <Param name="font" val="Arial" valType="str" updates="constant"/>
+        <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
+      </TextComponent>
+      <CodeComponent name="code_6">
+        <Param name="Begin Experiment" val="" valType="extendedCode" updates="constant"/>
+        <Param name="name" val="code_6" valType="code" updates="None"/>
+        <Param name="Begin Routine" val="# calculate mean of stats&#10;choice_means = {}&#10;for ttype in choice_stats:&#10;    choice_means[ttype] = np.mean(choice_stats[ttype])" valType="extendedCode" updates="constant"/>
+        <Param name="End Routine" val="win.close()&#10;myDlg = gui.Dlg(title=&quot;Results&quot;, size=gui.wx.Size(-200,-200))&#10;for ttype in choice_means:&#10;    selfValue = &quot;%.2f&quot; % (choice_means[ttype] * 100.0)&#10;    otherValue = &quot;%.2f&quot; % (100 - choice_means[ttype] * 100.0)&#10;    myDlg.addText(ttype+': '+selfValue+'% self, '+otherValue+'% other')&#10;myDlg.show()&#10;&#10;core.quit()" valType="extendedCode" updates="constant"/>
+        <Param name="End Experiment" val="" valType="extendedCode" updates="constant"/>
+        <Param name="Each Frame" val="" valType="extendedCode" updates="constant"/>
+      </CodeComponent>
+    </Routine>
+    <Routine name="choose_source">
+      <TextComponent name="question">
+        <Param name="opacity" val="1" valType="code" updates="constant"/>
+        <Param name="colorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="name" val="question" valType="code" updates="None"/>
+        <Param name="wrapWidth" val="2" valType="code" updates="constant"/>
+        <Param name="color" val="white" valType="str" updates="constant"/>
+        <Param name="text" val="Whose voice did you hear?" valType="str" updates="constant"/>
+        <Param name="stopVal" val="" valType="code" updates="constant"/>
+        <Param name="durationEstim" val="" valType="code" updates="None"/>
+        <Param name="pos" val="[0, .5]" valType="code" updates="constant"/>
+        <Param name="flip" val="" valType="str" updates="constant"/>
+        <Param name="startEstim" val="" valType="code" updates="None"/>
+        <Param name="units" val="from exp settings" valType="str" updates="None"/>
+        <Param name="startType" val="time (s)" valType="str" updates="None"/>
+        <Param name="ori" val="0" valType="code" updates="constant"/>
+        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
+        <Param name="startVal" val="0.0" valType="code" updates="None"/>
+        <Param name="font" val="Arial" valType="str" updates="constant"/>
+        <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
+      </TextComponent>
+      <PolygonComponent name="self_box">
+        <Param name="opacity" val="1" valType="code" updates="constant"/>
+        <Param name="fillColorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="name" val="self_box" valType="code" updates="None"/>
+        <Param name="fillColor" val="$SELF_BOX_FILL_COLOR" valType="str" updates="constant"/>
+        <Param name="stopVal" val="" valType="code" updates="constant"/>
+        <Param name="durationEstim" val="" valType="code" updates="None"/>
+        <Param name="pos" val="[-.5, -.5]" valType="code" updates="constant"/>
+        <Param name="interpolate" val="linear" valType="str" updates="constant"/>
+        <Param name="lineWidth" val="5" valType="code" updates="constant"/>
+        <Param name="startEstim" val="" valType="code" updates="None"/>
+        <Param name="units" val="from exp settings" valType="str" updates="None"/>
+        <Param name="startType" val="time (s)" valType="str" updates="None"/>
+        <Param name="lineColor" val="$SELF_BOX_BORDER_COLOR" valType="str" updates="constant"/>
+        <Param name="ori" val="0" valType="code" updates="constant"/>
+        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
+        <Param name="startVal" val="0.0" valType="code" updates="None"/>
+        <Param name="lineColorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="nVertices" val="4" valType="int" updates="constant"/>
+        <Param name="size" val="[0.5, 0.5]" valType="code" updates="constant"/>
+      </PolygonComponent>
+      <TextComponent name="self_label">
+        <Param name="opacity" val="1" valType="code" updates="constant"/>
+        <Param name="colorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="name" val="self_label" valType="code" updates="None"/>
+        <Param name="wrapWidth" val="" valType="code" updates="constant"/>
+        <Param name="color" val="black" valType="str" updates="constant"/>
+        <Param name="text" val="Mine" valType="str" updates="constant"/>
+        <Param name="stopVal" val="" valType="code" updates="constant"/>
+        <Param name="durationEstim" val="" valType="code" updates="None"/>
+        <Param name="pos" val="[-.5, -.5]" valType="code" updates="constant"/>
+        <Param name="flip" val="" valType="str" updates="constant"/>
+        <Param name="startEstim" val="" valType="code" updates="None"/>
+        <Param name="units" val="from exp settings" valType="str" updates="None"/>
+        <Param name="startType" val="time (s)" valType="str" updates="None"/>
+        <Param name="ori" val="0" valType="code" updates="constant"/>
+        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
+        <Param name="startVal" val="0.0" valType="code" updates="None"/>
+        <Param name="font" val="Arial" valType="str" updates="constant"/>
+        <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
+      </TextComponent>
+      <PolygonComponent name="other_box">
+        <Param name="opacity" val="1" valType="code" updates="constant"/>
+        <Param name="fillColorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="name" val="other_box" valType="code" updates="None"/>
+        <Param name="fillColor" val="$OTHER_BOX_FILL_COLOR" valType="str" updates="constant"/>
+        <Param name="stopVal" val="" valType="code" updates="constant"/>
+        <Param name="durationEstim" val="" valType="code" updates="None"/>
+        <Param name="pos" val="[.5, -.5]" valType="code" updates="constant"/>
+        <Param name="interpolate" val="linear" valType="str" updates="constant"/>
+        <Param name="lineWidth" val="5" valType="code" updates="constant"/>
+        <Param name="startEstim" val="" valType="code" updates="None"/>
+        <Param name="units" val="from exp settings" valType="str" updates="None"/>
+        <Param name="startType" val="time (s)" valType="str" updates="None"/>
+        <Param name="lineColor" val="$OTHER_BOX_BORDER_COLOR" valType="str" updates="constant"/>
+        <Param name="ori" val="0" valType="code" updates="constant"/>
+        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
+        <Param name="startVal" val="0.0" valType="code" updates="None"/>
+        <Param name="lineColorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="nVertices" val="4" valType="int" updates="constant"/>
+        <Param name="size" val="[0.5, 0.5]" valType="code" updates="constant"/>
+      </PolygonComponent>
+      <TextComponent name="other_label">
+        <Param name="opacity" val="1" valType="code" updates="constant"/>
+        <Param name="colorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="name" val="other_label" valType="code" updates="None"/>
+        <Param name="wrapWidth" val="" valType="code" updates="constant"/>
+        <Param name="color" val="black" valType="str" updates="constant"/>
+        <Param name="text" val="Other" valType="str" updates="constant"/>
+        <Param name="stopVal" val="" valType="code" updates="constant"/>
+        <Param name="durationEstim" val="" valType="code" updates="None"/>
+        <Param name="pos" val="[.5, -.5]" valType="code" updates="constant"/>
+        <Param name="flip" val="" valType="str" updates="constant"/>
+        <Param name="startEstim" val="" valType="code" updates="None"/>
+        <Param name="units" val="from exp settings" valType="str" updates="None"/>
+        <Param name="startType" val="time (s)" valType="str" updates="None"/>
+        <Param name="ori" val="0" valType="code" updates="constant"/>
+        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
+        <Param name="startVal" val="0.0" valType="code" updates="None"/>
+        <Param name="font" val="Arial" valType="str" updates="constant"/>
+        <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
+      </TextComponent>
+      <MouseComponent name="mouse">
+        <Param name="name" val="mouse" valType="code" updates="None"/>
+        <Param name="timeRelativeTo" val="routine" valType="str" updates="constant"/>
+        <Param name="stopVal" val="" valType="code" updates="constant"/>
+        <Param name="durationEstim" val="" valType="code" updates="None"/>
+        <Param name="forceEndRoutineOnPress" val="False" valType="bool" updates="constant"/>
+        <Param name="startEstim" val="" valType="code" updates="None"/>
+        <Param name="startType" val="time (s)" valType="str" updates="None"/>
+        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
+        <Param name="startVal" val="0.0" valType="code" updates="None"/>
+        <Param name="saveMouseState" val="never" valType="str" updates="None"/>
+      </MouseComponent>
+      <CodeComponent name="code_5">
+        <Param name="Begin Experiment" val="" valType="extendedCode" updates="constant"/>
+        <Param name="name" val="code_5" valType="code" updates="None"/>
+        <Param name="Begin Routine" val="" valType="extendedCode" updates="constant"/>
+        <Param name="End Routine" val="" valType="extendedCode" updates="constant"/>
+        <Param name="End Experiment" val="" valType="extendedCode" updates="constant"/>
+        <Param name="Each Frame" val="if mouse.isPressedIn(self_box, buttons=[0]):&#10;    trials.addData('choice', 'self')&#10;    choice_stats[trialtype_extended].append(1)&#10;    for thisComponent in trialComponents:&#10;            if hasattr(thisComponent, &quot;status&quot;):&#10;                thisComponent.status = FINISHED&#10;            continueRoutine = False&#10;elif mouse.isPressedIn(other_box, buttons=[0]):&#10;    trials.addData('choice','other')&#10;    choice_stats[trialtype_extended].append(0)&#10;    for thisComponent in trialComponents:&#10;            if hasattr(thisComponent, &quot;status&quot;):&#10;                thisComponent.status = FINISHED&#10;            continueRoutine = False&#10;&#10;if self_box.contains(mouse):&#10;    self_box.fillColor = SELF_BOX_BORDER_COLOR&#10;else:&#10;    self_box.fillColor = SELF_BOX_FILL_COLOR&#10;&#10;if other_box.contains(mouse):&#10;    other_box.fillColor = OTHER_BOX_BORDER_COLOR&#10;else:&#10;    other_box.fillColor = OTHER_BOX_FILL_COLOR" valType="extendedCode" updates="constant"/>
+      </CodeComponent>
+    </Routine>
+    <Routine name="trial">
+      <CodeComponent name="code_2">
+        <Param name="Begin Experiment" val="serv.start()" valType="extendedCode" updates="constant"/>
+        <Param name="name" val="code_2" valType="code" updates="None"/>
+        <Param name="Begin Routine" val="if(trialtype == &quot;pitch&quot;): # pitch trial&#10;    mic = Input(chnl=0)&#10;    b = Harmonizer(mic, transpo=float(amount))&#10;    c = Gate(b, thresh=-90, falltime=0.02, lookahead=20.0).mix(2).out()&#10;    d = Follower2(b)&#10;    talkThresh = .08&#10;    talkStarted = False&#10;    stoppedTalking = False&#10;    stopTime = 100&#10;elif(trialtype == 'speed'): # speed trial&#10;    finished = 'not finished'&#10;    playback_speed = float(amount)&#10;    dur = 2&#10;    if playback_speed == 0:&#10;        playback_speed = pow(10,-100)&#10;    i = Input()&#10;&#10;    def start():&#10;        rec.play()&#10;        a.play().out()&#10;        tf.stop()&#10;&#10;    def stop():&#10;        i.stop()&#10;        global finished&#10;        finished = 'finished'&#10;        a.stop()&#10;        a.reset()&#10;        tf.play()&#10;&#10;    tab = NewTable(dur, chnls=2)&#10;    transpo_to_normal = math.log(1.0 / playback_speed, 2) * 12&#10;    j = Harmonizer(i, transpo=transpo_to_normal).mix(2)&#10;    k = Gate(j, thresh=-70, falltime=0.02, lookahead=20.0)&#10;    rec = TableRec(k, tab)&#10;    a = TableRead(table=tab, freq=playback_speed/dur).stop()&#10;    env = Follower(i)&#10;    th = Thresh(env, .2)&#10;    tf = TrigFunc(th, start)&#10;    tr = TrigFunc(rec['trig'], stop)&#10;else: # unmodified trial&#10;    mic = Input(chnl=0)&#10;    b = Gate(mic, thresh=-90, falltime=0.02, lookahead=20.0).mix(2).out()&#10;    d = Follower2(mic)&#10;    talkThresh = .08&#10;    talkStarted = False&#10;    stoppedTalking = False&#10;    stopTime = 100" valType="extendedCode" updates="constant"/>
+        <Param name="End Routine" val="" valType="extendedCode" updates="constant"/>
+        <Param name="End Experiment" val="serv.stop()" valType="extendedCode" updates="constant"/>
+        <Param name="Each Frame" val="if(trialtype == &quot;pitch&quot; or trialtype == &quot;unmodified&quot;):&#10;    if d.get() &gt; talkThresh:&#10;            talkStarted = True&#10;&#10;    if talkStarted and not stoppedTalking:&#10;        if d.get() &lt; talkThresh:&#10;            stoppedTalking = True&#10;            stopTime = globalClock.getTime() + 1&#10;&#10;    if stoppedTalking and globalClock.getTime() &gt;= stopTime:&#10;        mic.stop()&#10;        for thisComponent in trialComponents:&#10;            if hasattr(thisComponent, &quot;status&quot;):&#10;                thisComponent.status = FINISHED&#10;            continueRoutine = False&#10;else:&#10;    if(finished == 'finished'):&#10;        for thisComponent in trialComponents:&#10;            if hasattr(thisComponent, &quot;status&quot;):&#10;                thisComponent.status = FINISHED&#10;            continueRoutine = False" valType="extendedCode" updates="constant"/>
+      </CodeComponent>
+      <TextComponent name="text">
+        <Param name="opacity" val="1" valType="code" updates="constant"/>
+        <Param name="colorSpace" val="rgb" valType="str" updates="constant"/>
+        <Param name="name" val="text" valType="code" updates="None"/>
+        <Param name="wrapWidth" val="" valType="code" updates="constant"/>
+        <Param name="color" val="white" valType="str" updates="constant"/>
+        <Param name="text" val="$word" valType="str" updates="set every repeat"/>
+        <Param name="stopVal" val="10" valType="code" updates="constant"/>
+        <Param name="durationEstim" val="" valType="code" updates="None"/>
+        <Param name="pos" val="[0, 0]" valType="code" updates="constant"/>
+        <Param name="flip" val="" valType="str" updates="constant"/>
+        <Param name="startEstim" val="" valType="code" updates="None"/>
+        <Param name="units" val="from exp settings" valType="str" updates="None"/>
+        <Param name="startType" val="time (s)" valType="str" updates="None"/>
+        <Param name="ori" val="0" valType="code" updates="constant"/>
+        <Param name="stopType" val="duration (s)" valType="str" updates="None"/>
+        <Param name="startVal" val="1" valType="code" updates="None"/>
+        <Param name="font" val="Arial" valType="str" updates="constant"/>
+        <Param name="letterHeight" val="0.1" valType="code" updates="constant"/>
+      </TextComponent>
+    </Routine>
     <Routine name="initialize_code">
       <CodeComponent name="code_3">
-        <Param name="Begin Experiment" val="from psychopy import gui&#10;from pyo import *&#10;import math, sys, csv, random&#10;serv = Server().boot()&#10;&#10;## SETTINGS ##&#10;&#10;SPEED_SMALL_AMOUNT = 0.975&#10;SPEED_MEDIUM_AMOUNT = 0.95&#10;SPEED_LARGE_AMOUNT = 0.925&#10;PITCH_HIGHER_SMALL_AMOUNT = 0.5&#10;PITCH_HIGHER_LARGE_AMOUNT = 1.0&#10;PITCH_LOWER_SMALL_AMOUNT = -0.5&#10;PITCH_LOWER_LARGE_AMOUNT = -1.0&#10;&#10;## END SETTINGS ##&#10;&#10;&#10;&#10;&#10;&#10;# initialize this variable - it keeps track of whether &#10;# the subject is finished speaking during a time stretch trial&#10;finished = True&#10;&#10;##########################################################&#10;### read in the original word list file and save word list file for this subject&#10;##########################################################&#10;# container array for file contents&#10;orig_words = []&#10;# read csv file with the original word lists (in same directory as this experiment script)&#10;with open('orig_words.csv', 'rU') as csvfile:&#10;    test = csv.reader(csvfile)&#10;    for i in test:&#10;        orig_words.append(i)&#10;&#10;# for now, assignment of list to trial type is random&#10;# need to write method for letting experimenter choose assignment at run time&#10;assignment_order = random.sample([0,1,2,3,4,5,6,7,8], 9)&#10;&#10;# initialize word containers for the trial types&#10;unmodified_words1 = []&#10;unmodified_words2 = []&#10;slowed_small_words = []&#10;slowed_medium_words = []&#10;slowed_large_words = []&#10;pitch_higher_small_words = []&#10;pitch_higher_large_words = []&#10;pitch_lower_small_words = []&#10;pitch_lower_large_words = []&#10;&#10;# assign words to those containers&#10;for row in orig_words:&#10;    unmodified_words1.append(row[assignment_order[0]])&#10;    unmodified_words2.append(row[assignment_order[1]])&#10;    slowed_small_words.append(row[assignment_order[2]])&#10;    slowed_medium_words.append(row[assignment_order[3]])&#10;    slowed_large_words.append(row[assignment_order[4]])&#10;    pitch_higher_small_words.append(row[assignment_order[5]])&#10;    pitch_higher_large_words.append(row[assignment_order[6]])&#10;    pitch_lower_small_words.append(row[assignment_order[7]])&#10;    pitch_lower_large_words.append(row[assignment_order[8]])&#10;&#10;# this will be the name of the wordlist csv file for this subject&#10;wordlist_filename = filename+'_wordlist.csv'&#10;&#10;# build a big array with all the words and also attach trialtype and amount data,&#10;# like this: [word, trialtype, trialtype_extended, amount, list]&#10;master_list = []&#10;&#10;# add the words (CAREFUL! This assumes all of the categories are of equal length)&#10;for word_index in range(len(slowed_small_words)):&#10;    if word_index == 0:&#10;        continue&#10;    master_list.append([unmodified_words1[word_index], 'unmodified', 'unmodified',            'unmodified',                                        unmodified_words1[0]])&#10;    master_list.append([unmodified_words2[word_index], 'unmodified', 'unmodified',            'unmodified',                                        unmodified_words2[0]])&#10;    master_list.append([slowed_small_words[word_index],         'speed', 'slow small',           SPEED_SMALL_AMOUNT,                slowed_small_words[0]])&#10;    master_list.append([slowed_medium_words[word_index],     'speed', 'slow medium',       SPEED_MEDIUM_AMOUNT,             slowed_medium_words[0]])&#10;    master_list.append([slowed_large_words[word_index],         'speed', 'slow large',             SPEED_LARGE_AMOUNT,               slowed_large_words[0]])&#10;    master_list.append([pitch_higher_small_words[word_index], 'pitch',  'pitch higher small', PITCH_HIGHER_SMALL_AMOUNT,  pitch_higher_small_words[0]])&#10;    master_list.append([pitch_higher_large_words[word_index], 'pitch',  'pitch higher large',  PITCH_HIGHER_LARGE_AMOUNT, pitch_higher_large_words[0]])&#10;    master_list.append([pitch_lower_small_words[word_index],  'pitch',  'pitch lower small',   PITCH_LOWER_SMALL_AMOUNT,  pitch_lower_small_words[0]])&#10;    master_list.append([pitch_lower_large_words[word_index],  'pitch',  'pitch lower large',    PITCH_LOWER_SMALL_AMOUNT,  pitch_lower_large_words[0]])&#10;&#10;# now randomize the list&#10;random.shuffle(master_list)&#10;&#10;# save csv file to disk&#10;with open(wordlist_filename,'wb') as w:&#10;    writer=csv.writer(w)&#10;    writer.writerow(['word','trialtype', 'trialtype_extended', 'amount', 'list'])&#10;    for row in master_list:&#10;        writer.writerow(row)" valType="extendedCode" updates="constant"/>
+        <Param name="Begin Experiment" val="from psychopy import gui&#10;from pyo import *&#10;import math, sys, csv, random&#10;serv = Server().boot()&#10;&#10;## SETTINGS ##&#10;&#10;SPEED_SMALL_AMOUNT = .9   #0.975&#10;SPEED_MEDIUM_AMOUNT = .8  #0.95&#10;SPEED_LARGE_AMOUNT = .7   #0.925&#10;PITCH_HIGHER_SMALL_AMOUNT = 1.5    #0.5&#10;PITCH_HIGHER_LARGE_AMOUNT = 2    #1.0&#10;PITCH_LOWER_SMALL_AMOUNT = -1.5 #-0.5&#10;PITCH_LOWER_LARGE_AMOUNT = -2 #-1.0&#10;&#10;SELF_BOX_FILL_COLOR = '#A6A9FF'&#10;SELF_BOX_BORDER_COLOR = '#3E45FA'&#10;OTHER_BOX_FILL_COLOR = '#FFFCA6'&#10;OTHER_BOX_BORDER_COLOR = '#FAF33E'&#10;&#10;## END SETTINGS ##&#10;&#10;&#10;&#10;&#10;&#10;# initialize this variable - it keeps track of whether &#10;# the subject is finished speaking during a time stretch trial&#10;finished = True&#10;&#10;##########################################################&#10;### read in the original word list file and save word list file for this subject&#10;##########################################################&#10;# container array for file contents&#10;orig_words = []&#10;# read csv file with the original word lists (in same directory as this experiment script)&#10;with open('orig_words.csv', 'rU') as csvfile:&#10;    test = csv.reader(csvfile)&#10;    for i in test:&#10;        orig_words.append(i)&#10;&#10;# for now, assignment of list to trial type is random&#10;# need to write method for letting experimenter choose assignment at run time&#10;assignment_order = random.sample([0,1,2,3,4,5,6,7,8], 9)&#10;&#10;# initialize word containers for the trial types&#10;unmodified_words1 = []&#10;unmodified_words2 = []&#10;slowed_small_words = []&#10;slowed_medium_words = []&#10;slowed_large_words = []&#10;pitch_higher_small_words = []&#10;pitch_higher_large_words = []&#10;pitch_lower_small_words = []&#10;pitch_lower_large_words = []&#10;&#10;# assign words to those containers&#10;for row in orig_words:&#10;    unmodified_words1.append(row[assignment_order[0]])&#10;    unmodified_words2.append(row[assignment_order[1]])&#10;    slowed_small_words.append(row[assignment_order[2]])&#10;    slowed_medium_words.append(row[assignment_order[3]])&#10;    slowed_large_words.append(row[assignment_order[4]])&#10;    pitch_higher_small_words.append(row[assignment_order[5]])&#10;    pitch_higher_large_words.append(row[assignment_order[6]])&#10;    pitch_lower_small_words.append(row[assignment_order[7]])&#10;    pitch_lower_large_words.append(row[assignment_order[8]])&#10;&#10;# this will be the name of the wordlist csv file for this subject&#10;wordlist_filename = filename+'_wordlist.csv'&#10;&#10;# build a big array with all the words and also attach trialtype and amount data,&#10;# like this: [word, trialtype, trialtype_extended, amount, list]&#10;master_list = []&#10;&#10;# add the words (CAREFUL! This assumes all of the categories are of equal length)&#10;for word_index in range(len(slowed_small_words)):&#10;    if word_index == 0:&#10;        continue&#10;    master_list.append([unmodified_words1[word_index], 'unmodified', 'unmodified',            'unmodified',                                        unmodified_words1[0]])&#10;    master_list.append([unmodified_words2[word_index], 'unmodified', 'unmodified',            'unmodified',                                        unmodified_words2[0]])&#10;    master_list.append([slowed_small_words[word_index],         'speed', 'slow_small',           SPEED_SMALL_AMOUNT,                slowed_small_words[0]])&#10;    master_list.append([slowed_medium_words[word_index],     'speed', 'slow_medium',       SPEED_MEDIUM_AMOUNT,             slowed_medium_words[0]])&#10;    master_list.append([slowed_large_words[word_index],         'speed', 'slow_large',             SPEED_LARGE_AMOUNT,               slowed_large_words[0]])&#10;    master_list.append([pitch_higher_small_words[word_index], 'pitch',  'pitch_higher_small', PITCH_HIGHER_SMALL_AMOUNT,  pitch_higher_small_words[0]])&#10;    master_list.append([pitch_higher_large_words[word_index], 'pitch',  'pitch_higher_large',  PITCH_HIGHER_LARGE_AMOUNT, pitch_higher_large_words[0]])&#10;    master_list.append([pitch_lower_small_words[word_index],  'pitch',  'pitch_lower_small',   PITCH_LOWER_SMALL_AMOUNT,  pitch_lower_small_words[0]])&#10;    master_list.append([pitch_lower_large_words[word_index],  'pitch',  'pitch_lower_large',    PITCH_LOWER_SMALL_AMOUNT,  pitch_lower_large_words[0]])&#10;&#10;# now randomize the list&#10;random.shuffle(master_list)&#10;&#10;# save csv file to disk&#10;with open(wordlist_filename,'wb') as w:&#10;    writer=csv.writer(w)&#10;    writer.writerow(['word','trialtype', 'trialtype_extended', 'amount', 'list'])&#10;    for row in master_list:&#10;        writer.writerow(row)&#10;&#10;# create container for stats&#10;choice_stats = {}&#10;choice_stats['unmodified'] = []&#10;choice_stats['slow_small'] = []&#10;choice_stats['slow_medium'] = []&#10;choice_stats['slow_large'] = []&#10;choice_stats['pitch_higher_small'] = []&#10;choice_stats['pitch_higher_large'] = []&#10;choice_stats['pitch_lower_small'] = []&#10;choice_stats['pitch_lower_large'] = []" valType="extendedCode" updates="constant"/>
         <Param name="name" val="code_3" valType="code" updates="None"/>
         <Param name="Begin Routine" val="" valType="extendedCode" updates="constant"/>
         <Param name="End Routine" val="" valType="extendedCode" updates="constant"/>
@@ -96,18 +260,19 @@
   <Flow>
     <Routine name="initialize_code"/>
     <LoopInitiator loopType="TrialHandler" name="trials">
-      <Param name="conditionsFile" val="wordlist.csv" valType="str" updates="None"/>
+      <Param name="conditionsFile" val="$wordlist_filename" valType="str" updates="None"/>
       <Param name="name" val="trials" valType="code" updates="None"/>
       <Param name="isTrials" val="True" valType="bool" updates="None"/>
       <Param name="random seed" val="" valType="code" updates="None"/>
-      <Param name="loopType" val="random" valType="str" updates="None"/>
+      <Param name="loopType" val="sequential" valType="str" updates="None"/>
       <Param name="nReps" val="1" valType="code" updates="None"/>
       <Param name="endPoints" val="[0, 1]" valType="num" updates="None"/>
-      <Param name="conditions" val="[{'word': u'cat', 'pitch': 0.85}, {'word': u'dog', 'pitch': 0.9}, {'word': u'truck', 'pitch': 1.1}, {'word': u'car', 'pitch': 1.15}, {'word': u'elephant', 'pitch': 1.2}]" valType="str" updates="None"/>
+      <Param name="conditions" val="None" valType="str" updates="None"/>
       <Param name="Selected rows" val="" valType="str" updates="None"/>
     </LoopInitiator>
     <Routine name="trial"/>
-    <Routine name="ok"/>
+    <Routine name="choose_source"/>
     <LoopTerminator name="trials"/>
+    <Routine name="thankyou"/>
   </Flow>
 </PsychoPy2experiment>
