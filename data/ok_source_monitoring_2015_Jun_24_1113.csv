@@ -1,0 +1,4 @@
+word,amount,list,trialtype,trialtype_extended,trials.thisRepN,trials.thisTrialN,trials.thisN,trials.thisIndex,choice,participant,listOrder,frameRate,expName,date,listMethod,
+word6.1,1.5,list6,pitch,pitch_higher_small,0,0,0,0,self,ok,"[u'1', u'2', u'3', u'4', u'5', u'6', u'7', u'8', u'9']",None,source_monitoring,2015_Jun_24_1113,set your own,
+word1.1,unmodified,list1,unmodified,unmodified,0,1,1,1,self,ok,"[u'1', u'2', u'3', u'4', u'5', u'6', u'7', u'8', u'9']",None,source_monitoring,2015_Jun_24_1113,set your own,
+word9.1,-1.5,list9,pitch,pitch_lower_large,0,2,2,2,other,ok,"[u'1', u'2', u'3', u'4', u'5', u'6', u'7', u'8', u'9']",None,source_monitoring,2015_Jun_24_1113,set your own,

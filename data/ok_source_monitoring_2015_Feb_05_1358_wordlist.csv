@@ -1,0 +1,10 @@
+word,trialtype,trialtype_extended,amount,list
+word1.1,speed,slow_small,0.9,list1
+word1.1,pitch,pitch_higher_small,1.5,list1
+word1.1,pitch,pitch_higher_large,2,list1
+word8.1,pitch,pitch_lower_large,-1.5,list8
+word1.1,speed,slow_medium,0.8,list1
+word1.1,unmodified,unmodified,unmodified,list1
+word1.1,speed,slow_large,0.7,list1
+word1.1,pitch,pitch_lower_small,-1.5,list1
+word1.1,unmodified,unmodified,unmodified,list1

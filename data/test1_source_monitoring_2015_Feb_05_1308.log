@@ -1,0 +1,30 @@
+0.2894 	WARNING 	Movie2 stim could not be imported and won't be available
+17.4970 	EXP 	Created window1 = Window(allowGUI=False, allowStencil=False, autoLog=True, bitsMode=UNKNOWN, blendMode='avg', color=array([-1., -1., -1.]), colorSpace='rgb', fullscr=UNKNOWN, gamma=None, lms=UNKNOWN, monitor=<psychopy.monitors.calibTools.Monitor instance at 0xc0d3b20>, name='window1', pos=[0, 0], screen=0, size=array([1440,  900]), stereo=False, units=u'norm', useFBO=True, viewOri=0.0, viewPos=None, viewScale=None, waitBlanking=True, winType='pyglet')
+17.4970 	EXP 	window1: recordFrameIntervals = False
+17.6608 	EXP 	window1: recordFrameIntervals = True
+17.8447 	EXP 	window1: recordFrameIntervals = False
+17.9374 	EXP 	Created text_4 = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='white', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='text_4', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 255.,  255.,  255.]), text=u'Instructions will go here.', units=u'norm', win=Window(...), wrapWidth=1)
+18.9733 	EXP 	Created text = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='white', colorSpace='named', contrast=1.0, depth=-1.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='text', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 255.,  255.,  255.]), text=u'default text', units=u'norm', win=Window(...), wrapWidth=1)
+18.9858 	EXP 	Created question = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='white', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='question', opacity=1.0, ori=0, pos=array([ 0. ,  0.5]), rgb=array([ 255.,  255.,  255.]), text=u'Whose voice did you hear?', units=u'norm', win=Window(...), wrapWidth=2)
+18.9864 	EXP 	<method-wrapper '__getattribute__' of attributeSetter object at 0x4c8250>: vertices = array([[-0.25,  0.25],
+       [ 0.25,  0.25],
+       [ 0.25, -0.25],
+       [-0.25, -0.25]])
+18.9885 	EXP 	Created self_box = Rect(autoDraw=False, autoLog=True, closeShape=True, contrast=1.0, depth=0, fillColor='#A6A9FF', fillColorSpace='hex', fillRGB=array([166, 169, 255]), interpolate=True, lineColor='#3E45FA', lineColorSpace='hex', lineRGB=array([ 62,  69, 250]), lineWidth=5, name='self_box', opacity=1.0, ori=array(0.0), pos=array([-0.5, -0.5]), size=array([ 1.,  1.]), units=u'norm', vertices=ndarray(...), win=Window(...))
+18.9938 	EXP 	Created self_label = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=-2.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='self_label', opacity=1.0, ori=0, pos=array([-0.5, -0.5]), rgb=array([ 0.,  0.,  0.]), text=u'Mine', units=u'norm', win=Window(...), wrapWidth=1)
+18.9944 	EXP 	<method-wrapper '__getattribute__' of attributeSetter object at 0x4c8250>: vertices = array([[-0.25,  0.25],
+       [ 0.25,  0.25],
+       [ 0.25, -0.25],
+       [-0.25, -0.25]])
+18.9967 	EXP 	Created other_box = Rect(autoDraw=False, autoLog=True, closeShape=True, contrast=1.0, depth=0, fillColor='#FFFCA6', fillColorSpace='hex', fillRGB=array([255, 252, 166]), interpolate=True, lineColor='#FAF33E', lineColorSpace='hex', lineRGB=array([250, 243,  62]), lineWidth=5, name='other_box', opacity=1.0, ori=array(0.0), pos=array([ 0.5, -0.5]), size=array([ 1.,  1.]), units=u'norm', vertices=ndarray(...), win=Window(...))
+19.0021 	EXP 	Created other_label = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='black', colorSpace='named', contrast=1.0, depth=-4.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='other_label', opacity=1.0, ori=0, pos=array([ 0.5, -0.5]), rgb=array([ 0.,  0.,  0.]), text=u'Other', units=u'norm', win=Window(...), wrapWidth=1)
+19.0143 	EXP 	Created text_3 = TextStim(alignHoriz='center', alignVert='center', antialias=True, autoLog=True, bold=False, color='white', colorSpace='named', contrast=1.0, depth=0.0, flipHoriz=False, flipVert=False, font='Arial', fontFiles=[], height=0.1, italic=False, name='text_3', opacity=1.0, ori=0, pos=array([ 0.,  0.]), rgb=array([ 255.,  255.,  255.]), text=u'Thank you for participating!', units=u'norm', win=Window(...), wrapWidth=1)
+19.0297 	EXP 	text_4: autoDraw = True
+24.0056 	EXP 	Imported /Volumes/Macintosh HD/Users/poppe076/Desktop/source_monitoring_task/data/test1_source_monitoring_2015_Feb_05_1308_wordlist.csv as conditions, 9 conditions, 5 params
+24.0061 	EXP 	Created sequence: sequential, trialTypes=9, nReps=1, seed=None
+24.1143 	EXP 	New trial (rep=0, index=0): {'word': u'word4.1', 'amount': u'1.5', 'list': u'list4', 'trialtype': u'pitch', 'trialtype_extended': u'pitch_higher_small'}
+24.1378 	EXP 	text_4: autoDraw = False
+24.1378 	EXP 	text_4: autoDraw = False
+24.1378 	EXP 	text: text = u'word4.1'
+25.1394 	EXP 	text: autoDraw = True
+25.4738 	DATA 	Keypress: escape
