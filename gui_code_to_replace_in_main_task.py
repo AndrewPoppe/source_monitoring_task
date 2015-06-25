@@ -1,11 +1,5 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-"""
-This experiment was created using PsychoPy2 Experiment Builder (v1.81.03), Thu Feb  5 12:37:35 2015
-If you publish work using this script please cite the relevant PsychoPy publications
-  Peirce, JW (2007) PsychoPy - Psychophysics software in Python. Journal of Neuroscience Methods, 162(1-2), 8-13.
-  Peirce, JW (2009) Generating stimuli for neuroscience using PsychoPy. Frontiers in Neuroinformatics, 2:10. doi: 10.3389/neuro.11.010.2008
-"""
 
 from __future__ import division  # so that 1/3=0.333 instead of 1/3=0
 from psychopy import core, data, event, logging, sound, gui
@@ -37,9 +31,9 @@ expInfo['expName'] = expName
 
 if expInfo['listMethod']=='set your own':
     myDlg2 = gui.Dlg(title='Set Word Lists')
-    conditions = ['unmodified 1', 'unmodified 2', 'slowed - small', 'slowed - medium', 'slowed - large', 'pitch - higher - small', 'pitch - higher - large', 'pitch - lower - small', 'pitch - lower - large']
+    conditions = ['unmodified', 'pitch - higher', 'pitch - lower']
     for cNum in range(len(conditions)):
-        myDlg2.addField(conditions[cNum], choices=[1,2,3,4,5,6,7,8,9], initial=cNum+1)
+        myDlg2.addField(conditions[cNum], choices=[1,2,3], initial=cNum+1)
     myDlg2.show()
     if myDlg2.OK == False: core.quit()  # user pressed cancel
     expInfo['listOrder'] = myDlg2.data

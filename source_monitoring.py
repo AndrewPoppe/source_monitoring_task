@@ -1,11 +1,5 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
-"""
-This experiment was created using PsychoPy2 Experiment Builder (v1.81.03), Thu Feb  5 12:37:35 2015
-If you publish work using this script please cite the relevant PsychoPy publications
-  Peirce, JW (2007) PsychoPy - Psychophysics software in Python. Journal of Neuroscience Methods, 162(1-2), 8-13.
-  Peirce, JW (2009) Generating stimuli for neuroscience using PsychoPy. Frontiers in Neuroinformatics, 2:10. doi: 10.3389/neuro.11.010.2008
-"""
 
 from __future__ import division  # so that 1/3=0.333 instead of 1/3=0
 from psychopy import core, data, event, logging, sound, gui
@@ -37,9 +31,9 @@ expInfo['expName'] = expName
 
 if expInfo['listMethod']=='set your own':
     myDlg2 = gui.Dlg(title='Set Word Lists')
-    conditions = ['unmodified 1', 'unmodified 2', 'slowed - small', 'slowed - medium', 'slowed - large', 'pitch - higher - small', 'pitch - higher - large', 'pitch - lower - small', 'pitch - lower - large']
+    conditions = ['unmodified', 'pitch - higher', 'pitch - lower']
     for cNum in range(len(conditions)):
-        myDlg2.addField(conditions[cNum], choices=[1,2,3,4,5,6,7,8,9], initial=cNum+1)
+        myDlg2.addField(conditions[cNum], choices=[1,2,3], initial=cNum+1)
     myDlg2.show()
     if myDlg2.OK == False: core.quit()  # user pressed cancel
     expInfo['listOrder'] = myDlg2.data
@@ -86,14 +80,13 @@ serv = Server().boot()
 
 ## SETTINGS ##
 
-SPEED_SMALL_AMOUNT = .9   #0.975
-SPEED_MEDIUM_AMOUNT = .8  #0.95
-SPEED_LARGE_AMOUNT = .7   #0.925
-PITCH_HIGHER_SMALL_AMOUNT = 1.5    #0.5
-PITCH_HIGHER_LARGE_AMOUNT = 2    #1.0
-PITCH_LOWER_SMALL_AMOUNT = -1.5 #-0.5
-PITCH_LOWER_LARGE_AMOUNT = -2 #-1.0
+# This is the amount to change the pitch on each block of trials (both higher and lower)
+PITCH_DELTA = 0.5
 
+# This is the word list file
+WORD_LIST_FILE = "wordlist.csv"
+
+# Colors of the choice buttons
 SELF_BOX_FILL_COLOR = '#A6A9FF'
 SELF_BOX_BORDER_COLOR = '#3E45FA'
 OTHER_BOX_FILL_COLOR = '#FFFCA6'
@@ -102,7 +95,12 @@ OTHER_BOX_BORDER_COLOR = '#FAF33E'
 ## END SETTINGS ##
 
 
-
+# this function ends a routine immediately
+def endRoutine():
+    for thisComponent in trialComponents:
+        if hasattr(thisComponent, "status"):
+            thisComponent.status = FINISHED
+        continueRoutine = False
 
 
 # initialize this variable - it keeps track of whether 
@@ -115,7 +113,7 @@ finished = True
 # container array for file contents
 orig_words = []
 # read csv file with the original word lists (in same directory as this experiment script)
-with open('orig_words.csv', 'rU') as csvfile:
+with open(WORD_LIST_FILE, 'rU') as csvfile:
     test = csv.reader(csvfile)
     for i in test:
         orig_words.append(i)
@@ -128,73 +126,80 @@ def fixList(x):
 if expInfo['listMethod']=='set your own':
     assignment_order = map(fixList, expInfo['listOrder'])
 else:
-    assignment_order = random.sample([0,1,2,3,4,5,6,7,8], 9)
+    assignment_order = random.sample([0,1,2], 3)
 
 # initialize word containers for the trial types
-unmodified_words1 = []
-unmodified_words2 = []
-slowed_small_words = []
-slowed_medium_words = []
-slowed_large_words = []
-pitch_higher_small_words = []
-pitch_higher_large_words = []
-pitch_lower_small_words = []
-pitch_lower_large_words = []
+unmodified_words = []
+pitch_higher_words = []
+pitch_lower_words = []
 
 # assign words to those containers
 for row in orig_words:
-    unmodified_words1.append(row[assignment_order[0]])
-    unmodified_words2.append(row[assignment_order[1]])
-    slowed_small_words.append(row[assignment_order[2]])
-    slowed_medium_words.append(row[assignment_order[3]])
-    slowed_large_words.append(row[assignment_order[4]])
-    pitch_higher_small_words.append(row[assignment_order[5]])
-    pitch_higher_large_words.append(row[assignment_order[6]])
-    pitch_lower_small_words.append(row[assignment_order[7]])
-    pitch_lower_large_words.append(row[assignment_order[8]])
+    unmodified_words.append(row[assignment_order[0]])
+    pitch_higher_words.append(row[assignment_order[1]])
+    pitch_lower_words.append(row[assignment_order[2]])
+
+# save word lists for each trial type
+unmodified_word_list = unmodified_words.pop(0)
+pitch_higher_word_list = pitch_higher_words.pop(0)
+pitch_lower_word_list = pitch_lower_words.pop(0)
+
+# randomize words in their lists
+random.shuffle(unmodified_words)
+random.shuffle(pitch_higher_words)
+random.shuffle(pitch_lower_words)
 
 # this will be the name of the wordlist csv file for this subject
 wordlist_filename = filename+'_wordlist.csv'
 results_filename = filename+'_summarized_results.csv'
 
-# build a big array with all the words and also attach trialtype and amount data,
-# like this: [word, trialtype, trialtype_extended, amount, list]
+# build a big array with all the words and also attach trialtype, block, and amount data,
+# like this: [block, word, trialtype, amount, list]
 master_list = []
 
-# add the words (CAREFUL! This assumes all of the categories are of equal length)
-for word_index in range(len(slowed_small_words)):
-    if word_index == 0:
-        continue
-    master_list.append([unmodified_words1[word_index], 'unmodified', 'unmodified',            'unmodified',                                        unmodified_words1[0]])
-    master_list.append([unmodified_words2[word_index], 'unmodified', 'unmodified',            'unmodified',                                        unmodified_words2[0]])
-    master_list.append([slowed_small_words[word_index],         'speed', 'slow_small',           SPEED_SMALL_AMOUNT,                slowed_small_words[0]])
-    master_list.append([slowed_medium_words[word_index],     'speed', 'slow_medium',       SPEED_MEDIUM_AMOUNT,             slowed_medium_words[0]])
-    master_list.append([slowed_large_words[word_index],         'speed', 'slow_large',             SPEED_LARGE_AMOUNT,               slowed_large_words[0]])
-    master_list.append([pitch_higher_small_words[word_index], 'pitch',  'pitch_higher_small', PITCH_HIGHER_SMALL_AMOUNT,  pitch_higher_small_words[0]])
-    master_list.append([pitch_higher_large_words[word_index], 'pitch',  'pitch_higher_large',  PITCH_HIGHER_LARGE_AMOUNT, pitch_higher_large_words[0]])
-    master_list.append([pitch_lower_small_words[word_index],  'pitch',  'pitch_lower_small',   PITCH_LOWER_SMALL_AMOUNT,  pitch_lower_small_words[0]])
-    master_list.append([pitch_lower_large_words[word_index],  'pitch',  'pitch_lower_large',    PITCH_LOWER_SMALL_AMOUNT,  pitch_lower_large_words[0]])
+# start pitch change at 0
+pitch_amount = 0
 
-# now randomize the list
-random.shuffle(master_list)
+# create blocks of 9 words and add them to master list
+for block_num in range(10):
+    block_words = []
+    pitch_amount = pitch_amount + PITCH_DELTA
+    for i in range(3):
+        word_index = block_num * 3 + i
+        subgroup = []
+        subgroup.append([block_num+1, unmodified_words[word_index], 'unmodified', 0, unmodified_word_list])
+        subgroup.append([block_num+1, pitch_higher_words[word_index], 'pitch higher', pitch_amount, pitch_higher_word_list])
+        subgroup.append([block_num+1, pitch_lower_words[word_index], 'pitch lower', -1 * pitch_amount, pitch_lower_word_list])
+        random.shuffle(subgroup)
+        block_words += subgroup
+    master_list += block_words
 
 # save csv file to disk
 with open(wordlist_filename,'wb') as w:
     writer=csv.writer(w)
-    writer.writerow(['word','trialtype', 'trialtype_extended', 'amount', 'list'])
+    writer.writerow(['block', 'word', 'trialtype', 'amount', 'list'])
     for row in master_list:
         writer.writerow(row)
 
 # create container for stats
+# this keeps track of how many times the subject chooses "other" for
+#   each trial type per block
+# it gets reset each block
 choice_stats = OrderedDict()
-choice_stats['unmodified'] = []
-choice_stats['slow_small'] = []
-choice_stats['slow_medium'] = []
-choice_stats['slow_large'] = []
-choice_stats['pitch_higher_small'] = []
-choice_stats['pitch_higher_large'] = []
-choice_stats['pitch_lower_small'] = []
-choice_stats['pitch_lower_large'] = []
+choice_stats['unmodified'] = 0 # we shouldn't need this one
+choice_stats['pitch higher'] = 0
+choice_stats['pitch lower'] = 0
+choice_stats['pitch higher block'] = 0
+choice_stats['pitch lower block'] = 0
+choice_stats['pitch higher amount'] = 0
+choice_stats['pitch lower amount'] = 0
+
+# these hold the "done" status for each pitch trial type
+pitch_higher_done = False
+pitch_lower_done = False
+
+# start with block number = 0
+this_block = 0
 
 # Initialize components for Routine "instructions"
 instructionsClock = core.Clock()
@@ -226,7 +231,8 @@ self_box = visual.Rect(win=win, name='self_box',
     ori=0, pos=[-.5, -.5],
     lineWidth=5, lineColor=SELF_BOX_BORDER_COLOR, lineColorSpace='rgb',
     fillColor=SELF_BOX_FILL_COLOR, fillColorSpace='rgb',
-    opacity=1,interpolate=True)
+    opacity=1,depth=-1.0, 
+interpolate=True)
 self_label = visual.TextStim(win=win, ori=0, name='self_label',
     text='Mine',    font='Arial',
     pos=[-.5, -.5], height=0.1, wrapWidth=None,
@@ -237,7 +243,8 @@ other_box = visual.Rect(win=win, name='other_box',
     ori=0, pos=[.5, -.5],
     lineWidth=5, lineColor=OTHER_BOX_BORDER_COLOR, lineColorSpace='rgb',
     fillColor=OTHER_BOX_FILL_COLOR, fillColorSpace='rgb',
-    opacity=1,interpolate=True)
+    opacity=1,depth=-3.0, 
+interpolate=True)
 other_label = visual.TextStim(win=win, ori=0, name='other_label',
     text='Other',    font='Arial',
     pos=[.5, -.5], height=0.1, wrapWidth=None,
@@ -250,9 +257,9 @@ x, y = [None, None]
 # Initialize components for Routine "thankyou"
 thankyouClock = core.Clock()
 text_3 = visual.TextStim(win=win, ori=0, name='text_3',
-    text='Thank you for participating!',    font='Arial',
+    text=u'Thank you for participating!',    font=u'Arial',
     pos=[0, 0], height=0.1, wrapWidth=None,
-    color='white', colorSpace='rgb', opacity=1,
+    color=u'white', colorSpace='rgb', opacity=1,
     depth=0.0)
 
 
@@ -291,7 +298,6 @@ while continueRoutine:
     
     # check if all components have finished
     if not continueRoutine:  # a component has requested a forced-end of Routine
-        routineTimer.reset()  # if we abort early the non-slip timer needs reset
         break
     continueRoutine = False  # will revert to True if at least one component still running
     for thisComponent in initialize_codeComponents:
@@ -306,14 +312,14 @@ while continueRoutine:
     # refresh the screen
     if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
         win.flip()
-    else:  # this Routine was not non-slip safe so reset non-slip timer
-        routineTimer.reset()
 
 #-------Ending Routine "initialize_code"-------
 for thisComponent in initialize_codeComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
 
+# the Routine "initialize_code" was not non-slip safe, so reset the non-slip timer
+routineTimer.reset()
 
 #------Prepare to start Routine "instructions"-------
 t = 0
@@ -347,7 +353,6 @@ while continueRoutine and routineTimer.getTime() > 0:
     
     # check if all components have finished
     if not continueRoutine:  # a component has requested a forced-end of Routine
-        routineTimer.reset()  # if we abort early the non-slip timer needs reset
         break
     continueRoutine = False  # will revert to True if at least one component still running
     for thisComponent in instructionsComponents:
@@ -393,51 +398,15 @@ for thisTrial in trials:
     frameN = -1
     routineTimer.add(11.000000)
     # update component parameters for each repeat
-    if(trialtype == "pitch"): # pitch trial
-        b = Harmonizer(mic, transpo=float(amount))
-        c = Gate(b, thresh=-90, falltime=0.02, lookahead=20.0).mix(2).out()
-        d = Follower2(b)
-        talkThresh = .08
-        talkStarted = False
-        stoppedTalking = False
-        stopTime = 100
-    elif(trialtype == 'speed'): # speed trial
-        finished = 'not finished'
-        playback_speed = float(amount)
-        dur = 2
-        if playback_speed == 0:
-            playback_speed = pow(10,-100)
     
-        def start():
-            rec.play()
-            a.play().out()
-            tf.stop()
+    b = Harmonizer(mic, transpo=float(amount))
+    c = Gate(b, thresh=-90, falltime=0.02, lookahead=20.0).mix(2).out()
+    d = Follower2(b)
+    talkThresh = .08
+    talkStarted = False
+    stoppedTalking = False
+    stopTime = 100
     
-        def stop():
-            k.stop()
-            global finished
-            finished = 'finished'
-            a.stop()
-            a.reset()
-            tf.play()
-    
-        tab = NewTable(dur, chnls=2)
-        transpo_to_normal = math.log(1.0 / playback_speed, 2) * 12
-        j = Harmonizer(mic, transpo=transpo_to_normal).mix(2)
-        k = Gate(j, thresh=-70, falltime=0.02, lookahead=20.0)
-        rec = TableRec(k, tab)
-        a = TableRead(table=tab, freq=playback_speed/dur).stop()
-        env = Follower(mic)
-        th = Thresh(env, .1)
-        tf = TrigFunc(th, start)
-        tr = TrigFunc(rec['trig'], stop)
-    else: # unmodified trial
-        b = Gate(mic, thresh=-90, falltime=0.02, lookahead=20.0).mix(2).out()
-        d = Follower2(mic)
-        talkThresh = .08
-        talkStarted = False
-        stoppedTalking = False
-        stopTime = 100
     text.setText(word)
     # keep track of which components have finished
     trialComponents = []
@@ -453,27 +422,21 @@ for thisTrial in trials:
         t = trialClock.getTime()
         frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
         # update/draw components on each frame
-        if(trialtype == "pitch" or trialtype == "unmodified"):
-            if d.get() > talkThresh:
-                    talkStarted = True
+        if d.get() > talkThresh:
+                talkStarted = True
         
-            if talkStarted and not stoppedTalking:
-                if d.get() < talkThresh:
-                    stoppedTalking = True
-                    stopTime = globalClock.getTime() + 1
+        if talkStarted and not stoppedTalking:
+            if d.get() < talkThresh:
+                stoppedTalking = True
+                stopTime = globalClock.getTime() + 1
         
-            if stoppedTalking and globalClock.getTime() >= stopTime:
-                b.stop()
-                for thisComponent in trialComponents:
-                    if hasattr(thisComponent, "status"):
-                        thisComponent.status = FINISHED
-                    continueRoutine = False
-        else:
-            if(finished == 'finished'):
-                for thisComponent in trialComponents:
-                    if hasattr(thisComponent, "status"):
-                        thisComponent.status = FINISHED
-                    continueRoutine = False
+        if stoppedTalking and globalClock.getTime() >= stopTime:
+            b.stop()
+            for thisComponent in trialComponents:
+                if hasattr(thisComponent, "status"):
+                    thisComponent.status = FINISHED
+                continueRoutine = False
+        
         
         # *text* updates
         if t >= 1 and text.status == NOT_STARTED:
@@ -486,7 +449,6 @@ for thisTrial in trials:
         
         # check if all components have finished
         if not continueRoutine:  # a component has requested a forced-end of Routine
-            routineTimer.reset()  # if we abort early the non-slip timer needs reset
             break
         continueRoutine = False  # will revert to True if at least one component still running
         for thisComponent in trialComponents:
@@ -514,7 +476,11 @@ for thisTrial in trials:
     frameN = -1
     # update component parameters for each repeat
     # setup some python lists for storing info about the mouse
-    
+    if(pitch_lower_done and pitch_higher_done):
+        for thisComponent in trialComponents:
+            if hasattr(thisComponent, "status"):
+                thisComponent.status = FINISHED
+            continueRoutine = False
     # keep track of which components have finished
     choose_sourceComponents = []
     choose_sourceComponents.append(question)
@@ -571,18 +537,17 @@ for thisTrial in trials:
             other_label.setAutoDraw(True)
         if mouse.isPressedIn(self_box, buttons=[0]):
             trials.addData('choice', 'self')
-            choice_stats[trialtype_extended].append(1)
             for thisComponent in trialComponents:
-                    if hasattr(thisComponent, "status"):
-                        thisComponent.status = FINISHED
-                    continueRoutine = False
+                if hasattr(thisComponent, "status"):
+                    thisComponent.status = FINISHED
+                continueRoutine = False
         elif mouse.isPressedIn(other_box, buttons=[0]):
             trials.addData('choice','other')
-            choice_stats[trialtype_extended].append(0)
+            choice_stats[trialtype] += 1
             for thisComponent in trialComponents:
-                    if hasattr(thisComponent, "status"):
-                        thisComponent.status = FINISHED
-                    continueRoutine = False
+                if hasattr(thisComponent, "status"):
+                    thisComponent.status = FINISHED
+                continueRoutine = False
         
         if self_box.contains(mouse):
             self_box.fillColor = SELF_BOX_BORDER_COLOR
@@ -596,7 +561,6 @@ for thisTrial in trials:
         
         # check if all components have finished
         if not continueRoutine:  # a component has requested a forced-end of Routine
-            routineTimer.reset()  # if we abort early the non-slip timer needs reset
             break
         continueRoutine = False  # will revert to True if at least one component still running
         for thisComponent in choose_sourceComponents:
@@ -611,15 +575,44 @@ for thisTrial in trials:
         # refresh the screen
         if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
             win.flip()
-        else:  # this Routine was not non-slip safe so reset non-slip timer
-            routineTimer.reset()
     
     #-------Ending Routine "choose_source"-------
     for thisComponent in choose_sourceComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
     # store data for trials (TrialHandler)
+    # check if next trial is a new block. 
+    # if it's a new block, check if current block had 3 "other" votes for either pitch type
+    # if so,  1) record appropriate block number for that type
+    #  2) set "done" flag to true for that type
+    # if both pitch types are done, end the trials loop
+    next_block = trials.getFutureTrial(1).block
+    this_amount = block * PITCH_DELTA
+    if(block != next_block):
+        if(choice_stats['pitch higher'] == 3 and not pitch_higher_done):
+            expInfo['pitch higher result block'] = block
+            expInfo['pitch higher result amount'] = this_amount
+            choice_stats['pitch higher block'] = block
+            choice_stats['pitch higher amount'] = this_amount
+            pitch_higher_done = True
+        if(choice_stats['pitch lower'] == 3 and not pitch_lower_done):
+            expInfo['pitch lower result block'] = block
+            expInfo['pitch lower result amount'] = -1 * this_amount
+            choice_stats['pitch lower block'] = block
+            choice_stats['pitch lower amount'] = -1 * this_amount
+            pitch_lower_done = True
+        if(pitch_lower_done and pitch_higher_done):
+            trials.finished = True
+            for thisComponent in trialComponents:
+                if hasattr(thisComponent, "status"):
+                    thisComponent.status = FINISHED
+                continueRoutine = False
+        choice_stats['pitch higher'] = 0
+        choice_stats['pitch lower'] = 0
     
+    
+    # the Routine "choose_source" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
     thisExp.nextEntry()
     
 # completed 1 repeats of 'trials'
@@ -631,10 +624,7 @@ thankyouClock.reset()  # clock
 frameN = -1
 routineTimer.add(5.000000)
 # update component parameters for each repeat
-# calculate mean of stats
-choice_means = OrderedDict()
-for ttype in choice_stats:
-    choice_means[ttype] = np.mean(choice_stats[ttype])
+
 
 
 # keep track of which components have finished
@@ -664,7 +654,6 @@ while continueRoutine and routineTimer.getTime() > 0:
     
     # check if all components have finished
     if not continueRoutine:  # a component has requested a forced-end of Routine
-        routineTimer.reset()  # if we abort early the non-slip timer needs reset
         break
     continueRoutine = False  # will revert to True if at least one component still running
     for thisComponent in thankyouComponents:
@@ -684,30 +673,16 @@ while continueRoutine and routineTimer.getTime() > 0:
 for thisComponent in thankyouComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
-#win.close()
-#myDlg = gui.Dlg(title="Results", size=gui.wx.Size(-200,-200))
-#for ttype in choice_means:
-#    selfValue = "%.2f" % (choice_means[ttype] * 100.0)
-#    otherValue = "%.2f" % (100 - choice_means[ttype] * 100.0)
-#    myDlg.addText(ttype+': '+selfValue+'% self, '+otherValue+'% other')
-#myDlg.show()
-
-#core.quit()
-
 results = '\n\r'
-for ttype in choice_means:
-    selfValue = "%.2f" % (choice_means[ttype] * 100.0)
-    otherValue = "%.2f" % (100 - choice_means[ttype] * 100.0)
-    results += ttype+': '+selfValue+'% self, '+otherValue+'% other'+'\n\r'
 
-# write summarized results to csv file
-with open(results_filename,'wb') as w:
-    writer=csv.writer(w)
-    writer.writerow(['trialtype', 'percent_self_choices', 'percent_other_choices'])
-    for row in choice_means:
-        selfValue = "%.2f" % (choice_means[row] * 100.0)
-        otherValue = "%.2f" % (100 - choice_means[row] * 100.0)
-        writer.writerow([row, selfValue, otherValue])
+results += 'Pitch (higher) block = ' + str(choice_stats['pitch higher block']) + '\n\r'
+results += 'Pitch (lower) block = ' + str(choice_stats['pitch lower block']) + '\n\r'
+results += '\n\r'
+results += 'Pitch (higher) amount = ' + str(choice_stats['pitch higher amount']) + '\n\r'
+results += 'Pitch (lower) amount = ' + str(choice_stats['pitch lower amount']) + '\n\r'
+
+
+
 
 #------Prepare to start Routine "display_results"-------
 t = 0
@@ -760,7 +735,6 @@ while continueRoutine:
     
     # check if all components have finished
     if not continueRoutine:  # a component has requested a forced-end of Routine
-        routineTimer.reset()  # if we abort early the non-slip timer needs reset
         break
     continueRoutine = False  # will revert to True if at least one component still running
     for thisComponent in display_resultsComponents:
@@ -775,13 +749,13 @@ while continueRoutine:
     # refresh the screen
     if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
         win.flip()
-    else:  # this Routine was not non-slip safe so reset non-slip timer
-        routineTimer.reset()
 
 #-------Ending Routine "display_results"-------
 for thisComponent in display_resultsComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
+# the Routine "display_results" was not non-slip safe, so reset the non-slip timer
+routineTimer.reset()
 
 serv.stop()
 

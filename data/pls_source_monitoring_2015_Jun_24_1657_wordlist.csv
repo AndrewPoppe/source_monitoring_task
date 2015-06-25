@@ -1,0 +1,91 @@
+block,word,trialtype,amount,list
+1,word3.16,pitch higher,0.5,list3
+1,word1.20,pitch lower,-0.5,list1
+1,word2.3,unmodified,0,list2
+1,word3.28,pitch higher,0.5,list3
+1,word1.9,pitch lower,-0.5,list1
+1,word2.6,unmodified,0,list2
+1,word3.7,pitch higher,0.5,list3
+1,word1.24,pitch lower,-0.5,list1
+1,word2.11,unmodified,0,list2
+2,word2.22,unmodified,0,list2
+2,word1.21,pitch lower,-1.0,list1
+2,word3.30,pitch higher,1.0,list3
+2,word1.3,pitch lower,-1.0,list1
+2,word3.22,pitch higher,1.0,list3
+2,word2.24,unmodified,0,list2
+2,word1.18,pitch lower,-1.0,list1
+2,word2.26,unmodified,0,list2
+2,word3.13,pitch higher,1.0,list3
+3,word3.14,pitch higher,1.5,list3
+3,word1.15,pitch lower,-1.5,list1
+3,word2.17,unmodified,0,list2
+3,word2.7,unmodified,0,list2
+3,word3.2,pitch higher,1.5,list3
+3,word1.2,pitch lower,-1.5,list1
+3,word3.29,pitch higher,1.5,list3
+3,word2.5,unmodified,0,list2
+3,word1.26,pitch lower,-1.5,list1
+4,word1.30,pitch lower,-2.0,list1
+4,word2.8,unmodified,0,list2
+4,word3.18,pitch higher,2.0,list3
+4,word1.1,pitch lower,-2.0,list1
+4,word2.20,unmodified,0,list2
+4,word3.10,pitch higher,2.0,list3
+4,word2.30,unmodified,0,list2
+4,word3.21,pitch higher,2.0,list3
+4,word1.23,pitch lower,-2.0,list1
+5,word3.20,pitch higher,2.5,list3
+5,word2.23,unmodified,0,list2
+5,word1.17,pitch lower,-2.5,list1
+5,word3.27,pitch higher,2.5,list3
+5,word2.14,unmodified,0,list2
+5,word1.14,pitch lower,-2.5,list1
+5,word2.10,unmodified,0,list2
+5,word3.26,pitch higher,2.5,list3
+5,word1.7,pitch lower,-2.5,list1
+6,word3.3,pitch higher,3.0,list3
+6,word1.5,pitch lower,-3.0,list1
+6,word2.27,unmodified,0,list2
+6,word3.9,pitch higher,3.0,list3
+6,word1.19,pitch lower,-3.0,list1
+6,word2.9,unmodified,0,list2
+6,word3.12,pitch higher,3.0,list3
+6,word1.16,pitch lower,-3.0,list1
+6,word2.15,unmodified,0,list2
+7,word3.11,pitch higher,3.5,list3
+7,word1.8,pitch lower,-3.5,list1
+7,word2.25,unmodified,0,list2
+7,word2.2,unmodified,0,list2
+7,word3.24,pitch higher,3.5,list3
+7,word1.27,pitch lower,-3.5,list1
+7,word2.28,unmodified,0,list2
+7,word3.6,pitch higher,3.5,list3
+7,word1.13,pitch lower,-3.5,list1
+8,word2.13,unmodified,0,list2
+8,word1.12,pitch lower,-4.0,list1
+8,word3.4,pitch higher,4.0,list3
+8,word2.16,unmodified,0,list2
+8,word1.6,pitch lower,-4.0,list1
+8,word3.19,pitch higher,4.0,list3
+8,word2.1,unmodified,0,list2
+8,word3.5,pitch higher,4.0,list3
+8,word1.4,pitch lower,-4.0,list1
+9,word3.15,pitch higher,4.5,list3
+9,word2.29,unmodified,0,list2
+9,word1.11,pitch lower,-4.5,list1
+9,word2.12,unmodified,0,list2
+9,word1.22,pitch lower,-4.5,list1
+9,word3.23,pitch higher,4.5,list3
+9,word3.25,pitch higher,4.5,list3
+9,word2.21,unmodified,0,list2
+9,word1.29,pitch lower,-4.5,list1
+10,word1.10,pitch lower,-5.0,list1
+10,word2.4,unmodified,0,list2
+10,word3.17,pitch higher,5.0,list3
+10,word3.8,pitch higher,5.0,list3
+10,word2.19,unmodified,0,list2
+10,word1.28,pitch lower,-5.0,list1
+10,word3.1,pitch higher,5.0,list3
+10,word1.25,pitch lower,-5.0,list1
+10,word2.18,unmodified,0,list2
