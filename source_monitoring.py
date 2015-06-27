@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division  # so that 1/3=0.333 instead of 1/3=0
+from psychopy import visual
 from psychopy import core, data, event, logging, sound, gui
 from psychopy.constants import *  # things like STARTED, FINISHED
 import numpy as np  # whole numpy lib is available, prepend 'np.'
@@ -19,11 +20,15 @@ expInfo = {}
 
 myDlg = gui.Dlg(title=expName, size=gui.wx.Size(-1,-75))
 myDlg.addField(u'participant: ', u'')
-myDlg.addField('word lists: ', choices=['random','set your own']) 
+myDlg.addField('word lists: ', choices=['random','set your own'])
+myDlg.addField('Start: ', u'0.25')
+myDlg.addField('Delta: ', u'0.25')
 myDlg.show()
 if myDlg.OK == False: core.quit()  # user pressed cancel
 expInfo['participant'] = myDlg.data[0]
 expInfo['listMethod'] = myDlg.data[1]
+expInfo['start'] = myDlg.data[2]
+expInfo['delta'] = myDlg.data[3]
 print expInfo['listMethod']
 expInfo['date'] = data.getDateStr()  # add a simple timestamp
 expInfo['expName'] = expName
@@ -38,7 +43,6 @@ if expInfo['listMethod']=='set your own':
     if myDlg2.OK == False: core.quit()  # user pressed cancel
     expInfo['listOrder'] = myDlg2.data
     
-from psychopy import visual
 
 
 # Data file name stem = absolute path + name; later add .psyexp, .csv, .log, etc
@@ -59,7 +63,7 @@ endExpNow = False  # flag for 'escape' or other condition => quit the exp
 # Start Code - component code to be run before the window creation
 
 # Setup the Window
-win = visual.Window(size=(1440, 900), fullscr=True, screen=0, allowGUI=False, allowStencil=False,
+win = visual.Window(size=(1366, 768), fullscr=True, screen=0, allowGUI=False, allowStencil=False,
     monitor='testMonitor', color=[-1,-1,-1], colorSpace='rgb',
     blendMode='avg', useFBO=True,
     )
@@ -72,16 +76,7 @@ else:
 
 # Initialize components for Routine "initialize_code"
 initialize_codeClock = core.Clock()
-from psychopy import gui
-from pyo import *
-import math, sys, csv, random
-from collections import OrderedDict
-serv = Server().boot()
-
 ## SETTINGS ##
-
-# This is the amount to change the pitch on each block of trials (both higher and lower)
-PITCH_DELTA = 0.5
 
 # This is the word list file
 WORD_LIST_FILE = "wordlist.csv"
@@ -95,21 +90,56 @@ OTHER_BOX_BORDER_COLOR = '#FAF33E'
 ## END SETTINGS ##
 
 
-# this function ends a routine immediately
-def endRoutine():
-    for thisComponent in trialComponents:
-        if hasattr(thisComponent, "status"):
-            thisComponent.status = FINISHED
-        continueRoutine = False
+
+from psychopy import gui
+from pyo import *
+import math, sys, csv, random
+from collections import OrderedDict
+
+# This is the amount to change the pitch on each block of trials (both higher and lower)
+PITCH_DELTA = float(expInfo['delta'])
+
+# This is where to start the pitch on the first block
+PITCH_START = float(expInfo['start'])
+
+
+# This sets up the pyo audio server
+serv = Server()
+out_devices = pa_get_output_devices()
+in_devices = pa_get_input_devices()
+
+od_index = 0
+id_index = 0
+
+for od in out_devices[0]:
+    if "ASIO" in od:
+        odi = int(out_devices[1][od_index])
+        serv.setOutputDevice(odi)
+        print odi, out_devices[0][od_index]
+        break
+    od_index += 1
+    
+for id in in_devices[0]:
+    if "ASIO" in id:
+        idi = int(in_devices[1][id_index])
+        serv.setInputDevice(idi)
+        print idi, in_devices[0][id_index]
+        break
+    id_index += 1
+
+
+serv.boot()
 
 
 # initialize this variable - it keeps track of whether 
 # the subject is finished speaking during a time stretch trial
 finished = True
 
+
 ##########################################################
 ### read in the original word list file and save word list file for this subject
 ##########################################################
+
 # container array for file contents
 orig_words = []
 # read csv file with the original word lists (in same directory as this experiment script)
@@ -157,13 +187,13 @@ results_filename = filename+'_summarized_results.csv'
 # like this: [block, word, trialtype, amount, list]
 master_list = []
 
-# start pitch change at 0
-pitch_amount = 0
+# this ensures pitch amount will equal PITCH_START on first block
+pitch_amount = PITCH_START - PITCH_DELTA
 
 # create blocks of 9 words and add them to master list
 for block_num in range(10):
     block_words = []
-    pitch_amount = pitch_amount + PITCH_DELTA
+    pitch_amount += PITCH_DELTA
     for i in range(3):
         word_index = block_num * 3 + i
         subgroup = []
@@ -257,18 +287,18 @@ x, y = [None, None]
 # Initialize components for Routine "thankyou"
 thankyouClock = core.Clock()
 text_3 = visual.TextStim(win=win, ori=0, name='text_3',
-    text=u'Thank you for participating!',    font=u'Arial',
+    text='Thank you for participating!',    font='Arial',
     pos=[0, 0], height=0.1, wrapWidth=None,
-    color=u'white', colorSpace='rgb', opacity=1,
+    color='white', colorSpace='rgb', opacity=1,
     depth=0.0)
 
 
 # Initialize components for Routine "display_results"
 display_resultsClock = core.Clock()
 results_text = visual.TextStim(win=win, ori=0, name='results_text',
-    text='default text',    font=u'Arial',
+    text='default text',    font='Arial',
     pos=[0, 0], height=0.1, wrapWidth=2,
-    color=u'white', colorSpace='rgb', opacity=1,
+    color='white', colorSpace='rgb', opacity=1,
     depth=0.0)
 
 # Create some handy timers
@@ -468,7 +498,7 @@ for thisTrial in trials:
     for thisComponent in trialComponents:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
-    
+    serv.stop()
     
     #------Prepare to start Routine "choose_source"-------
     t = 0
@@ -609,6 +639,7 @@ for thisTrial in trials:
                 continueRoutine = False
         choice_stats['pitch higher'] = 0
         choice_stats['pitch lower'] = 0
+    serv.start()
     
     
     # the Routine "choose_source" was not non-slip safe, so reset the non-slip timer

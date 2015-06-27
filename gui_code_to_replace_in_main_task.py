@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division  # so that 1/3=0.333 instead of 1/3=0
+from psychopy import visual
 from psychopy import core, data, event, logging, sound, gui
 from psychopy.constants import *  # things like STARTED, FINISHED
 import numpy as np  # whole numpy lib is available, prepend 'np.'
@@ -19,11 +20,15 @@ expInfo = {}
 
 myDlg = gui.Dlg(title=expName, size=gui.wx.Size(-1,-75))
 myDlg.addField(u'participant: ', u'')
-myDlg.addField('word lists: ', choices=['random','set your own']) 
+myDlg.addField('word lists: ', choices=['random','set your own'])
+myDlg.addField('Start: ', u'0.25')
+myDlg.addField('Delta: ', u'0.25')
 myDlg.show()
 if myDlg.OK == False: core.quit()  # user pressed cancel
 expInfo['participant'] = myDlg.data[0]
 expInfo['listMethod'] = myDlg.data[1]
+expInfo['start'] = myDlg.data[2]
+expInfo['delta'] = myDlg.data[3]
 print expInfo['listMethod']
 expInfo['date'] = data.getDateStr()  # add a simple timestamp
 expInfo['expName'] = expName
@@ -38,4 +43,3 @@ if expInfo['listMethod']=='set your own':
     if myDlg2.OK == False: core.quit()  # user pressed cancel
     expInfo['listOrder'] = myDlg2.data
     
-from psychopy import visual
